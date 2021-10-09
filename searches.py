@@ -2,6 +2,8 @@
 
 # Linear search (sequential search)
 #
+# Preconditions: none.
+#
 # Inputs: collection, key
 # Output: Index of key within collection, -1 if unsuccessful.
 #
@@ -10,6 +12,8 @@
 # being searched for is the first element. The worst is
 # the key is not in the list at all, having compared every
 # item in the list.
+#
+# Often is the simplest method to search in unsorted collections.
 #
 # Worst case O(2n)
 # Best case O(2)
@@ -27,6 +31,8 @@ def sequential(list, key):
 
 # Linear search (sequential search) with sentinel.
 # 
+# Preconditions: none.
+#
 # Inputs: collection, key
 # Output: Index of key within collection, -1 if unsuccessful. 
 #
@@ -35,6 +41,8 @@ def sequential(list, key):
 # loop. Instead of the index comparison stop condition, the
 # algorithm continues searching for the key until its found, which
 # is appended to the end of the list. 
+#
+# Often is the simplest method to search in unsorted collections.
 #
 # Worst case: O(n+1)
 # Best case: O(2)
@@ -52,4 +60,36 @@ def sequential_sentinel(list, key):
         return i                   
     else: 
         return -1               # Index of -1 since unsuccessful. 
+
+# Binary search.
+#
+# Preconditions: Collection is sorted.
+#
+# Input: collection, key
+# Output: Index of key within collection, -1 if unsuccessful.
+#
+# This is an interval search, as opposed to sequential, meaning
+# It breaks the list into intervals and acts on smaller subproblems.
+# It necessarily requires the list to be sorted, however, it is
+# much more efficient with the worst case being O(logn), so
+# it plays well with a larger amount of data. 
+#
+# Worst case: O(logn)
+# Best case: O(1)
+# Average case: O(logn)
+
+def binary(list, key):
+    return binary_recurse(list, 0, len(list)-1, key)
+
+def binary_recurse(list, l, r, key):
+    i = (l+r)//2                                        # Set index to midpoint of collection.
+    if(l > r):                                          # Exit condition: when collection cannot be split further. Return -1
+        return -1                                       
+    if(key == list[i]):                                 # Success condition: key found. Return index
+        return i
+    if(key > list[i]):                                  # Continue condition: determine if key is larger than current element.
+        return binary_recurse(list, i+1, r, key)        # If it is discard left half and pass new endpoints of list.
+    return binary_recurse(list, l, i-1, key)            # Otherwise, discard right half
+
+
 
