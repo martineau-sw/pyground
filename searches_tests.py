@@ -1,16 +1,22 @@
 import unittest
+import testutilities
 import searches
 
 class TestSearches(unittest.TestCase):
     
+    def TestSearches(self):
+        self.test_data = testutilities.TestList()
 
     def test_sequential(self):
-        list = [27,-2,0,135,-2000]
+        test = testutilities.TestList()
 
-        self.assertEqual(searches.sequential(list,27), 0)       # First in list
-        self.assertEqual(searches.sequential(list,0), 2)        # Middle of list
-        self.assertEqual(searches.sequential(list,-2000), 4)    # Last in list
-        self.assertEqual(searches.sequential(list,5), -1)       # Not in list
+        test.generate_unordered_ints(100)
+
+        self.assertEqual(searches.sequential(test.list,test.first()), 0)       # First in list
+        e = test.random_element()
+        self.assertEqual(searches.sequential(test.list,test.list[e]), e)        # Middle of list
+        self.assertEqual(searches.sequential(test.list,test.last()), len(test.list)-1)    # Last in list
+        self.assertEqual(searches.sequential(test.list,101), -1)       # Not in list
 
     def test_sequential_sentinel(self):
         list = [27,-2,0,135,-2000]
