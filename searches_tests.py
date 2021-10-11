@@ -3,9 +3,6 @@ import searches
 
 class TestSearches(unittest.TestCase):
     
-    def TestSearches(self):
-        self.test_data = testutilities.TestList()
-
     def test_sequential(self):
         list = [x for x in range(0,9)]
 
