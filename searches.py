@@ -1,3 +1,5 @@
+import math
+
 # Search algorithms.
 
 # Linear search (sequential search)
@@ -49,17 +51,18 @@ def sequential(list, key):
 # Average case: O(n+2/2)
 
 def sequential_sentinel(list, key):
-    i = 0                   # Set i to 0
-    act = len(list)         # Store length of list for return purposes
+    i = 0                   # Set i to 0        
     list.append(key)        # Add the sentinel to list
 
     while(key != list[i]):  # Continue until key is found, which is always at end of list. (n)
-        i+=1                # Iterate
+        i+=1            
 
-    if (i < act):           # If element was found within original list return index. (1)
+    list.pop()
+
+    if (i < len(list)):   # If element was found within original list return index. (1)
         return i                   
     else: 
-        return -1               # Index of -1 since unsuccessful. 
+        return -1           # Index of -1 since unsuccessful. 
 
 # Binary search.
 #
@@ -88,8 +91,98 @@ def binary_recurse(list, l, r, key):
     if(key == list[i]):                                 # Success condition: key found. Return index
         return i
     if(key > list[i]):                                  # Continue condition: determine if key is larger than current element.
-        return binary_recurse(list, i+1, r, key)        # If it is discard left half and pass new endpoints of list.
-    return binary_recurse(list, l, i-1, key)            # Otherwise, discard right half
+        return binary_recurse(list, i+1, r, key)        # If it is perform binary search on right half, discarding left.
+    return binary_recurse(list, l, i-1, key)            # Otherwise, perform binary search on left half, discarding right.
 
 
+# Jump search
+#
+# Precondition: Collection is sorted
+#
+# Input: collection, key 
+# Output: Index of key within collection, -1 if unsuccessful
+#
+# This is an interval search like the binary search. The 
+# principal feature of this algorithm is that it quickly
+# moves past data that is far from the key, then refines 
+# its search when it gets closer. The algorithm accomplishes
+# this by performing a linear search with a step size greater 
+# than one and the reduces the step size to one after surpassing
+# the key.
+# 
+# Worst case: O((n/m)+m-1) with step size m.
+# Best case: O(1)
+# Average case: 
 
+def jump(list, key):
+    i = 0
+    m = int(math.sqrt(len(list)))                   # The sqrt of n is the optimal step size.
+
+    while(i+m < len(list) and list[i+m] < key):     # Continue steps until we either exceed the length of the list
+        i += m                                      # or pass the element we're looking for.
+
+    if(key == list[i]):                             # After breaking from the loop, check the current
+        return i
+
+    while(i < len(list) and list[i] < key):
+        i += 1
+
+    if(i == len(list)):
+        return -1
+    return i
+        
+# Interpolation search
+#
+# Preconditions: Uniformly spaced, ordered array. 
+#
+# Input: collection, key
+# Output: Index of key in collection, -1 if unsuccessful.
+#
+# Models collection as a line in the form of y = mx + b, 
+# then solves for x. Requires that collection has uniformly
+# spaced, ordered values. This implementation underestimates
+# the index to account for floating point error, then steps 
+# until the key value is exceeded in order to verify the entry
+# doesn't exists.
+def interpolation(list, key):
+
+    delta = (list[len(list)-1] - list[0]) / (len(list)-1)
+    i = int((key - list[0]) // delta)
+    
+    while(i < len(list)-1 and list[i] < key):
+        i += 1
+    
+    if(list[i] == key):
+        return i
+
+    return -1
+
+# Exponential Search
+# 
+# Preconditions: Collection is sorted.
+# 
+# Input: Sorted Collection, Key
+# Output: Index of key within colletion, -1 if unsuccessful.
+# 
+# The exponential search is a binary search with this algorithm
+# preceding it. The first step finds the bounds of the collection
+# for the binary search to act upon by increasing the upper bound
+# by powers of 2 until the the target is below the bound. After 
+# setting the upper bound, the lower bound is the last tested
+# power of two, since it was not found within it. The region
+# defined can now be binary searched. This method is ideal for
+# unbounded/infinite sorted data. 
+#
+# Worst Case: O(logn)
+# Best Case: O(1)
+# Average Case: O(logn)
+
+def exponential(list, key): 
+    
+    i = 0
+    while(2**i < len(list) and list[2**i] < key):
+        i += 1
+
+    return binary_recurse(list,min(0,2**(i-1)),min(2**i,len(list)-1),key)
+ 
+    
